@@ -6,7 +6,7 @@ import json
 app = Flask(__name__)
 app.config["JSON_AS_ASCII"] = False
 
-
+# test word # wwww
 class UTF8JSONEncoder(json.JSONEncoder):
     def ensure_ascii(self):
         return False
