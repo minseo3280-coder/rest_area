@@ -401,8 +401,9 @@ function openRestModal(rest) {
     if (!el) return;
 
     // 데이터가 true, 1, "1"인 경우 활성화
-    const isActive = (has === true || has === 1 || has === "1" || has === "Y");
-    
+//    const isActive = (has === true || has === 1 || has === "1" || has === "Y");
+      const isActive = (true );
+  
     if (isActive) {
       el.className = "p-2 rounded-lg bg-blue-50 text-blue-600 font-bold"; // 활성 스타일
     } else {
