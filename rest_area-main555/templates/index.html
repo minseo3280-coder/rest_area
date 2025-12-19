@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Highway Gourmet Road</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a18ee9e09aaab67acf451183b83fd6d4&libraries=services"></script>
+    
+    <link rel="stylesheet" href="/static/style.css" />
+    
+    <style>
+        body { font-family: 'Noto Sans KR', sans-serif; background-color: #f3f4f6; }
+    </style>
+</head>
+<body class="min-h-screen pb-12">
+
+    <div class="relative bg-gray-900 h-72 overflow-hidden rounded-b-[3rem] shadow-xl">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-900 to-slate-900 opacity-90"></div>
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=2021&q=80')] bg-cover bg-center mix-blend-overlay opacity-40"></div>
+        
+        <div class="relative z-10 flex flex-col items-center justify-center h-full pb-10 text-center px-4">
+            <h1 class="text-3xl md:text-4xl font-black text-white mb-2 tracking-tight">Highway Gourmet Road</h1>
+            <p class="text-blue-200 font-medium text-sm md:text-base">맛있는 휴식이 있는 여정을 큐레이션합니다</p>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 -mt-20 relative z-20">
+        
+        <div class="max-w-md mx-auto bg-white rounded-3xl shadow-xl p-6 mb-8 border border-gray-100">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1 ml-1">출발지 (START)</label>
+                    <div class="relative">
+                        <input id="start" type="text" placeholder="예: 부산역" class="w-full bg-gray-50 text-gray-800 font-bold border-0 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-400">
+                    </div>
+                </div>
+
+                <div id="autocomplete" class="hidden absolute bg-white shadow-xl rounded-xl border border-gray-100 w-64 z-50 max-h-48 overflow-y-auto"></div>
+
+                <div class="flex justify-center -my-2 relative z-10">
+                    <div class="bg-gray-100 rounded-full p-2 border-4 border-white">
+                        <span class="text-gray-400">⬇</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 mb-1 ml-1">목적지 (END)</label>
+                    <input id="end" type="text" placeholder="예: 수원역" class="w-full bg-gray-50 text-gray-800 font-bold border-0 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 transition-all placeholder-gray-400">
+                </div>
+
+                <button onclick="requestRoute()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transform transition hover:scale-[1.02] active:scale-[0.98]">
+                    🔍 맛집 로드 검색하기
+                </button>
+            </div>
+        </div>
+
+        <div id="empty-state" class="mt-16 text-center text-gray-400">
+            <div class="inline-block p-4 rounded-full bg-gray-100 mb-4">
+                <svg class="w-8 h-8 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 7m0 13V7" />
+                </svg>
+            </div>
+            <p class="text-sm">출발지와 도착지를 입력하여<br/>나만의 미식 로드를 확인해보세요.</p>
+        </div>
+
+        <div id="result-area" class="hidden animate-fade-in-up">
+            
+            <div class="flex justify-center gap-2 mb-6 flex-wrap">
+                <button id="filter-best" class="filter-chip">⭐ 맛집 4.0+</button>
+                <button id="filter-ev" class="filter-chip">⚡ 전기차 충전</button>
+                <button id="filter-gas" class="filter-chip">⛽ 주유소</button>
+            </div>
+
+            <div class="max-w-3xl mx-auto mb-8 bg-white p-2 rounded-2xl shadow-lg border border-gray-100">
+                <div id="map" class="w-full h-80 rounded-xl bg-gray-100"></div>
+                
+                <div id="route-meta" class="hidden flex justify-between items-center p-4 bg-white">
+                    <div>
+                        <span class="text-xs font-bold text-gray-400 block">총 거리</span>
+                        <span id="meta-distance" class="text-xl font-black text-gray-800">- km</span>
+                    </div>
+                    <div class="h-8 w-[1px] bg-gray-200"></div>
+                    <div class="text-right">
+                        <span class="text-xs font-bold text-gray-400 block">예상 시간</span>
+                        <span id="meta-time" class="text-xl font-black text-gray-800">- 시간</span>
+                    </div>
+                </div>
+                
+                <button onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" class="w-full py-3 bg-yellow-400 hover:bg-yellow-500 text-black font-bold rounded-b-xl text-sm">
+                    📍 카카오맵으로 실제 경로 보기 (클릭 시 하단)
+                </button>
+            </div>
+
+            <div class="max-w-2xl mx-auto relative pl-4 md:pl-0">
+                <div class="absolute left-8 md:left-1/2 top-0 bottom-0 w-0.5 bg-gray-200 -ml-[1px]"></div>
+                
+                <div id="rest-list" class="space-y-8 pb-10"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rest-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeRestModal()"></div>
+        <div class="relative bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl transform transition-all scale-100">
+            <button onclick="closeRestModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">✕</button>
+            
+            <div class="text-center mb-6">
+                <span id="modal-highway" class="inline-block px-3 py-1 bg-gray-100 rounded-full text-xs font-bold text-gray-500 mb-2"></span>
+                <h2 id="modal-name" class="text-2xl font-black text-gray-900"></h2>
+                <div class="text-yellow-500 font-bold mt-1">⭐ <span id="modal-rating"></span></div>
+            </div>
+
+            <div class="space-y-4">
+                <div class="bg-orange-50 p-4 rounded-2xl border border-orange-100">
+                    <h3 class="text-xs font-bold text-orange-600 mb-2">🏆 대표 메뉴</h3>
+                    <div class="flex justify-between items-start">
+                        <span id="modal-menu-name" class="font-bold text-gray-800"></span>
+                        <span id="modal-menu-price" class="font-bold text-orange-500"></span>
+                    </div>
+                    <p id="modal-menu-desc" class="text-xs text-gray-500 mt-1"></p>
+                </div>
+
+                <div class="grid grid-cols-4 gap-2 text-center text-xs">
+                    <div id="fac-gas" class="p-2 rounded-lg bg-gray-50 text-gray-400">⛽ 주유</div>
+                    <div id="fac-ev" class="p-2 rounded-lg bg-gray-50 text-gray-400">⚡ 전기</div>
+                    <div id="fac-pharmacy" class="p-2 rounded-lg bg-gray-50 text-gray-400">💊 약국</div>
+                    <div id="fac-baby" class="p-2 rounded-lg bg-gray-50 text-gray-400">👶 수유</div>
+                </div>
+
+                <button id="modal-naver" class="w-full py-3 bg-[#03C75A] text-white font-bold rounded-xl shadow-md hover:bg-[#02b351]">
+                    네이버 플레이스 상세보기
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/main.js"></script>
+</body>
+</html>

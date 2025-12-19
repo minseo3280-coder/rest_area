@@ -1,0 +1,179 @@
+/* Tailwind가 대부분 처리하므로 Custom CSS는 최소화 */
+
+/* 필터 칩 버튼 스타일 */
+.filter-chip {
+    padding: 8px 16px;
+    border-radius: 999px;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    color: #4b5563;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: all 0.2s;
+}
+
+
+.filter-chip:hover {
+    background-color: #f9fafb;
+}
+
+/* 활성화 상태 */
+.filter-chip.active-best { background: #fff7ed; color: #ea580c; border-color: #fdba74; }
+.filter-chip.active-ev { background: #f0fdf4; color: #16a34a; border-color: #86efac; }
+.filter-chip.active-gas { background: #eff6ff; color: #2563eb; border-color: #93c5fd; }
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* 타임라인 노드 스타일 */
+.timeline-item {
+    position: relative;
+    padding-left: 60px; /* 모바일 기준 */
+}
+
+/* 데스크탑(md) 이상에서는 중앙 정렬 효과를 위해 */
+@media (min-width: 768px) {
+    .timeline-item {
+        padding-left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+    
+    /* 카드 너비 */
+    .timeline-card-wrapper {
+        width: 45%; 
+    }
+    
+
+    /* 중앙 점 위치 조정 */
+    .timeline-dot {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+/* 모바일 전용 점 위치 */
+@media (max-width: 767px) {
+    .timeline-dot {
+        position: absolute;
+        left: 32px; /* left-8 */
+        top: 24px;
+        transform: translateX(-50%);
+    }
+}
+
+/* 시설 아이콘 활성화 */
+.facility-active {
+    background-color: #dbeafe !important; /* blue-100 */
+    color: #2563eb !important; /* blue-600 */
+    font-weight: bold;
+}
+
+/* 타임라인 컨테이너 */
+#rest-list {
+    position: relative;
+    padding: 2rem 0;
+}
+
+/* 중앙 수직선 */
+#rest-list::before {
+    content: '';
+    position: absolute;
+    left: 20px; /* 모바일: 왼쪽 정렬 */
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+/* 데스크탑에서 선을 중앙으로 이동 */
+@media (min-width: 768px) {
+    #rest-list::before {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+/* 타임라인 아이템 개별 요소 */
+.timeline-item {
+    position: relative;
+    width: 100%;
+    margin-bottom: 2rem;
+    padding-left: 50px; /* 모바일 대응 */
+}
+
+@media (min-width: 768px) {
+    .timeline-item {
+        padding-left: 0;
+        display: flex;
+        justify-content: center; /* 중앙 정렬 */
+    }
+}
+
+/* 타임라인 중앙 노드(점) */
+.timeline-dot {
+    position: absolute;
+    left: 20px;
+    top: 24px;
+    width: 16px;
+    height: 16px;
+    background: #3b82f6;
+    border: 4px solid white;
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px #e5e7eb;
+    z-index: 10;
+    transform: translateX(-50%);
+}
+
+@media (min-width: 768px) {
+    .timeline-dot {
+        left: 50%;
+    }
+}
+
+/* 휴게소 카드 스타일
+.timeline-card-wrapper {
+    width: 100%;
+    max-width: 500px; /* 카드 최대 너비 제한 */
+/* } */
+
+.rest-card-inner {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    border: 1px solid #f3f4f6;
+    transition: transform 0.2s;
+}
+
+.rest-card-inner:hover {
+    transform: translateY(-2px);
+}
+
+#rest-modal span, #rest-modal p, #rest-modal h2 {
+    color: inherit; /* 부모의 색상을 따르도록 설정 */
+    word-break: keep-all; /* 단어 단위 줄바꿈 방지 */
+}
+
+/* Lucide 아이콘 중앙 정렬 보정 */
+[data-lucide] {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* 모달이 뜰 때 레이아웃 깨짐 방지 */
+#rest-modal .grid, #rest-modal .flex {
+    width: 100%;
+}
