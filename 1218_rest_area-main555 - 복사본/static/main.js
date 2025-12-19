@@ -15,6 +15,17 @@ let routeBaseLevel = null;
 const geocoder = new kakao.maps.services.Geocoder();
 const addressCache = {}; // restId -> address 캐시
 
+function setFac(id, has) {
+  const el = document.getElementById(id);
+  if (!el) return;
+
+  const isActive = (has === "Y");
+
+  el.className = isActive
+    ? "p-2 rounded-lg bg-blue-50 text-blue-600 font-bold"
+    : "p-2 rounded-lg bg-gray-50 text-gray-400 opacity-60";
+}
+
 // 주소 역변환
 function getAddressFromCoords(lat, lng, callback) {
   geocoder.coord2Address(lng, lat, function (result, status) {
@@ -499,7 +510,7 @@ window.handleCardClick = function (idx, restId) {
   const r = window.restData?.[restId];
   if (!r) return;
 
-  
+
   openRestModal(r);
 };
 
@@ -520,7 +531,6 @@ function openRestModal(rest) {
   // 주소
   const addrEl = document.getElementById("modal-address");
   if (addrEl) {
-    // 캐시 우선
     if (addressCache[rest.id]) {
       addrEl.textContent = addressCache[rest.id];
     } else {
@@ -533,10 +543,14 @@ function openRestModal(rest) {
   }
 
   // 대표 메뉴
-  document.getElementById("modal-menu-name").textContent = rest.food || "정보 없음";
+  document.getElementById("modal-menu-name").textContent =
+    rest.food || "정보 없음";
 
-  const priceEl = document.getElementById("modal-menu-price");
-  if (priceEl) priceEl.textContent = rest.price || "";
+  // 🔥 시설물 처리 (추가된 핵심)
+  setFac("fac-gas", rest.gas);
+  setFac("fac-ev", rest.elec);
+  setFac("fac-pharmacy", rest.pharmacy);
+  setFac("fac-baby", rest.nurse);
 
   // Gemini 설명
   const descEl = document.getElementById("modal-menu-desc");
@@ -555,25 +569,6 @@ function openRestModal(rest) {
     .catch(() => {
       descEl.textContent = "메뉴 정보를 불러오는 중 오류가 발생했습니다.";
     });
-
-  // 시설물 (너 기존대로 유지: 지금은 전부 true 처리)
-  const setFac = (id, has) => {
-    const el = document.getElementById(id);
-    if (!el) return;
-
-    // TODO: 실제 데이터로 바꾸고 싶으면 아래 줄을 활성화
-    // const isActive = (has === true || has === 1 || has === "1" || has === "Y");
-    const isActive = true;
-
-    el.className = isActive
-      ? "p-2 rounded-lg bg-blue-50 text-blue-600 font-bold"
-      : "p-2 rounded-lg bg-gray-50 text-gray-400 opacity-60";
-  };
-
-  setFac("fac-gas", rest.has_gas);
-  setFac("fac-ev", rest.has_ev);
-  setFac("fac-pharmacy", rest.has_pharmacy);
-  setFac("fac-baby", rest.has_baby);
 
   // 카카오맵 버튼
   const kakaoBtn = document.getElementById("modal-kakao");

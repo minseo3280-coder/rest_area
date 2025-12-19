@@ -41,12 +41,12 @@ class Database:
                     latitude AS lat,
                     longitude AS lng,
                     IFNULL(signature_food, '') AS food,
-                    shelter_yn AS shelter,
-                    pharmacy_yn AS pharmacy,
-                    store_yn AS store,
-                    tel,
-                    addr
-                FROM highway
+                    gas_ys AS gas,
+                    elec_ys AS elec,
+                    phar_ys AS pharmacy,
+                    Nursing_ys AS nurse,
+                    tel
+                FROM highway1
                 """
                 if limit:
                     query += " LIMIT %s"
