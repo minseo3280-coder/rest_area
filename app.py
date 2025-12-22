@@ -2,6 +2,8 @@ import os
 import requests
 import json
 from flask import Flask, render_template, request, jsonify
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+
 from db import Database
 
 app = Flask(__name__)
@@ -157,3 +159,4 @@ def get_rest_area_info():
 
 if __name__ == "__main__":
     app.run()
+
